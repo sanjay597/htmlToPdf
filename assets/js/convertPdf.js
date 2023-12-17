@@ -20,14 +20,11 @@ let prepareHtml = () => {
         resultMap.set(('{' + m[1] + '}'), ('{' + m[1] + '}'));
         i++;
     }
-
-    return str1;
 }
 
 setTimeout(() => {
-    let html = prepareHtml();
-
-    generatePDF(html);
+    prepareHtml();
+    generatePDF();
 }, 1000);
 
 let exportExcelData = () => {
@@ -45,11 +42,13 @@ let exportExcelData = () => {
 }
 
 
-window.jsPDF = window.jspdf.jsPDF;
-var doc = new jsPDF();
-
-let generatePDF = (str1) => {
-    doc.html(str1, {
+let generatePDF = () => {
+    window.jsPDF = window.jspdf.jsPDF;
+    let doc = new jsPDF();
+    let newHtml = tinymce.get("content").getContent();
+    newHtml = DOMPurify.sanitize(newHtml);
+    $('#showPDF').attr('src', '');
+    doc.html(newHtml, {
         callback: function (doc) {
             // console.log(doc.output('datauristring'));
             // console.log(doc.output('bloburl'));
@@ -63,6 +62,6 @@ let generatePDF = (str1) => {
 }
 
 let preparePdf = () => {
-    let html = prepareHtml();
-    generatePDF(html);
+    prepareHtml();
+    generatePDF();
 };
