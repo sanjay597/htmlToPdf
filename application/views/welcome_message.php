@@ -120,7 +120,7 @@
 		<iframe id="showPDF" width="550" height="400"></iframe>
 	</div>
 	<div class="col-lg-7" style="text-align: end;">
-		<input type="button" class="btn btn-info" value="Update PDF" onclick="preparePdf();"/>
+		<input type="button" class="btn btn-info" value="Update PDF" id="generatePdf" onclick="preparePdf();"/>
 	</div>
 	<div class="col-lg-5" style="text-align: end;">
 		<input type="button" class="btn btn-success" value="Download Excel" onclick="exportExcelData();"/>
