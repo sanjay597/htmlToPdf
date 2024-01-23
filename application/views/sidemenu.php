@@ -42,14 +42,21 @@
 
 <div class="container-fluid">
     <input type="hidden" value="<?php echo base_url(); ?>" id="base_url"/>
-	<div class="row">
+    <input type="hidden" value="<?php echo $_SESSION['name'] ?>" id="adminName"/>
+    <input type="hidden" value="<?php echo $_SESSION['id'] ?>" id="adminId"/>
+	<div class="row mt-4">
 		<div class="col-lg-2">
             <div class="sidebar">
                 <a href="<?php echo base_url('admin/dashboard') ?>"><i class="fa fa-fw fa-home"></i> Create Agreement</a>
                 <a href="<?php echo base_url('admin/pdfList') ?>"><i class="fa fa-fw fa-wrench"></i> Pdf List</a>
+                <a href="<?php echo base_url('logout') ?>"><i class="fa fa-fw fa-wrench"></i> Logout</a>
             </div>
         </div>
 		<div class="col-lg-10">
+      <script>
+        const adminName = $('#adminName').val();
+        const adminId = $('#adminId').val();
+      </script>
 <!-- The sidebar -->
 
 

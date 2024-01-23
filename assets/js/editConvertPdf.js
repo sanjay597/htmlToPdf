@@ -18,15 +18,17 @@ function ajaxCall(url, data) {
     });
 }
 
-tinymce.init({
-    selector: 'textarea#content',
-    //use the setup option to handle events taking place within TinyMCE. Handling an event that returns data – in this case, an alert
-    // setup: function (editor) {
-    //     editor.on('click', function (e) { //Thanks to Benson Kariuki for the keydown event code https://www.section.io/engineering-education/keyboard-events-in-javascript/#javascript-keyboard-events
-    //         myCustomOnChangeHandler();
-    //     })
-    // }
-});
+// tinymce.init({
+//     selector: 'textarea#content',
+//     //use the setup option to handle events taking place within TinyMCE. Handling an event that returns data – in this case, an alert
+//     // setup: function (editor) {
+//     //     editor.on('click', function (e) { //Thanks to Benson Kariuki for the keydown event code https://www.section.io/engineering-education/keyboard-events-in-javascript/#javascript-keyboard-events
+//     //         myCustomOnChangeHandler();
+//     //     })
+//     // }
+// });
+
+CKEDITOR.replace('content');
 
 let resultMap = new Map(), m, rx = /{(.*?)}/g;
 
@@ -34,7 +36,7 @@ let prepareHtml = () => {
     resultMap.clear();
     return new Promise((resolve, reject) => {
         $('#dynamicFields').html('');
-        let str1 = tinymce.get("content").getContent();
+        let str1 = CKEDITOR.instances['content'].getData();
         str1 = DOMPurify.sanitize(str1);
         let i = 1;
         while ((m = rx.exec(str1)) !== null) {
@@ -47,11 +49,23 @@ let prepareHtml = () => {
 }
 
 $(document).ready(async () => {
+    let pdfData = [];
     setTimeout(async () => {
-        await getPdfData();
+        pdfData = await getPdfData();
         prepareHtml();
         $('#generatePdf').click();
     }, 1000);
+
+    var editor = CKEDITOR.instances.content;
+    if (editor) {
+        editor.destroy(true);
+    }
+    CKEDITOR.config.extraPlugins = 'lite';
+    var lite = CKEDITOR.config.lite || {};
+    CKEDITOR.config.lite = lite;
+    CKEDITOR.config.lite.userName = adminName;
+    CKEDITOR.config.lite.userId = adminId;
+    CKEDITOR.replace('content', CKEDITOR.config);
 });
 
 let exportExcelData = () => {
@@ -72,7 +86,7 @@ let exportExcelData = () => {
 let generatePDF = () => {
     window.jsPDF = window.jspdf.jsPDF;
     let doc = new jsPDF();
-    let newHtml = tinymce.get("content").getContent();
+    let newHtml = CKEDITOR.instances['content'].getData();
     newHtml = DOMPurify.sanitize(newHtml);
     $('#showPDF').attr('src', '');
     doc.html(newHtml, {
@@ -92,17 +106,16 @@ let preparePdf = async () => {
 };
 
 let savePdfData = async () => {
-    let agreement_title = $('#agreement_title').val();
-    let agreement = tinymce.get("content").getContent();
-    let admin_comment = $('#admin_comment').val();
     let pdfId = $('#pdfId').val();
+    let agreement_title = $('#agreement_title').val();
+    let content = CKEDITOR.instances['content'].getData();
+    let admin_comment = $('#admin_comment').val();
     let url = 'pdf/updateData';
-    let data = { agreement_title: agreement_title, agreement: agreement, admin_comment:admin_comment, pdfId:pdfId };
+    let data = { pdfId: pdfId, agreement_title: agreement_title, agreement: content, admin_comment: admin_comment };
     let ajaxData = await ajaxCall(url, data);
-    console.log(ajaxData);
     alert(ajaxData.message);
-    if(ajaxData.success == 1) {
-        window.location = base_url + 'pdf/pdfList';
+    if (ajaxData.success == 1) {
+        window.location = base_url + 'pdf/versionList/' + pdfId;
     }
 }
 
@@ -111,8 +124,12 @@ let getPdfData = async () => {
     let url = 'pdf/pdfData';
     let data = { pdfId: pdfId };
     let ajaxData = await ajaxCall(url, data);
-    if(ajaxData.success == 1) {
+    if (ajaxData.success == 1) {
         $('#agreement_title').val(ajaxData['data'].agreement_title);
-        tinymce.get("content").setContent(ajaxData['data'].agreement_data);
+        CKEDITOR.instances['content'].setData(ajaxData['data'].agreement_data);
+        if(ajaxData['data'].final_status == 1) {
+            $('#updatePdf').css('display', 'none')
+        }
+        
     }
 }

@@ -57,6 +57,24 @@ class CommonModel extends CI_Model
         return $response;
     }
 
+    public function mainPdfUpdate($title, $agreement, $adminComment, $pdfId)
+    {
+        try {
+            $adminId = $_SESSION['id'];
+            $query = "UPDATE pdf_master SET agreement_title = ?, agreement_data = ?, updated_by = ?, updated_date = ? WHERE id = ? AND final_status = 2";
+            $res = $this->db->query($query, ["{$title}", "{$agreement}", "$adminId", "{$this->datetime}", "$pdfId"]);
+            if ($this->db->affected_rows() > 0) {
+                $response = ['success' => 1, 'message' => "Data updated"];
+                $this->pdfUpdateData($title, $agreement, $adminComment, $pdfId);
+            } else {
+                $response = ['success' => 0, 'message' => 'Failed to update data'];
+            }
+        } catch (Exception $e) {
+            $response = ['success' => 0, 'message' => $e->getMessage()];
+        }
+        return $response;
+    }
+
     public function pdfUpdateData($title, $agreement, $adminComment, $pdfId)
     {
         try {
@@ -95,10 +113,10 @@ class CommonModel extends CI_Model
     {
         try {
             $adminId = $_SESSION['id'];
-            $query = "SELECT pdf.id, agreement_title, agreement_data, admin_comment, pdf.status, pdf.created_by, DATE_FORMAT(pdf.created_date, '%d, %b %Y') created_date, ad.id admin_id, IF(? = pdf.created_by, 1, 0) show_action, ad.name FROM pdf_master_version pdf LEFT JOIN admin ad ON pdf.created_by = ad.id WHERE pdf.pdf_id=?";
+            $query = "SELECT pdf.id, agreement_title, agreement_data, admin_comment, pdf.status, pdf.created_by, DATE_FORMAT(pdf.created_date, '%d, %b %Y') created_date, ad.id admin_id, (SELECT IF(? = created_by, 1, 0) FROM pdf_master WHERE id = pdf.pdf_id) show_action, ad.name FROM pdf_master_version pdf LEFT JOIN admin ad ON pdf.created_by = ad.id WHERE pdf.id=?";
             $res = $this->db->query($query, [$adminId, "$pdfId"]);
             if ($res->num_rows() > 0) {
-                $response = ['success' => 1, 'data' => $res->result_array()];
+                $response = ['success' => 1, 'data' => $res->row_array()];
             } else {
                 $response = ['success' => 0, 'message' => 'No list data found'];
             }

@@ -18,10 +18,11 @@ function ajaxCall(url, data) {
     });
 }
 
-tinymce.init({
-    selector: 'textarea#content',
-    readonly: true
-});
+// tinymce.init({
+//     selector: 'textarea#content',
+//     readonly: true
+// });
+CKEDITOR.replace('content');
 
 let resultMap = new Map(), m, rx = /{(.*?)}/g;
 
@@ -29,7 +30,7 @@ let prepareHtml = () => {
     resultMap.clear();
     return new Promise((resolve, reject) => {
         $('#dynamicFields').html('');
-        let str1 = tinymce.get("content").getContent();
+        let str1 = CKEDITOR.instances['content'].getData();
         str1 = DOMPurify.sanitize(str1);
         let i = 1;
         while ((m = rx.exec(str1)) !== null) {
@@ -47,13 +48,25 @@ $(document).ready(async () => {
         prepareHtml();
         $('#generatePdf').click();
     }, 1000);
+
+    var editor = CKEDITOR.instances.content;
+    if (editor) {
+        editor.destroy(true);
+    }
+    // CKEDITOR.config.readOnly = true;
+    CKEDITOR.config.extraPlugins = 'lite';
+    var lite = CKEDITOR.config.lite || {};
+    CKEDITOR.config.lite = lite;
+    CKEDITOR.config.lite.userName = 'Sanjay';
+    // CKEDITOR.config.lite.commands = [LITE.Commands.TOGGLE_SHOW, LITE.Commands.ACCEPT_ALL, LITE.Commands.REJECT_ALL];
+    CKEDITOR.replace('content', CKEDITOR.config);
 });
 
 
 let generatePDF = () => {
     window.jsPDF = window.jspdf.jsPDF;
     let doc = new jsPDF();
-    let newHtml = tinymce.get("content").getContent();
+    let newHtml = CKEDITOR.instances['content'].getData();
     newHtml = DOMPurify.sanitize(newHtml);
     $('#showPDF').attr('src', '');
     doc.html(newHtml, {
@@ -90,6 +103,9 @@ let getPdfData = async () => {
     let ajaxData = await ajaxCall(url, data);
     if (ajaxData.success == 1) {
         $('#agreement_title').val(ajaxData['data'].agreement_title);
-        tinymce.get("content").setContent(ajaxData['data'].agreement_data);
+        CKEDITOR.instances['content'].setData(ajaxData['data'].agreement_data);
+        if(ajaxData['data'].show_action == 1) {
+            $('#copyMain').show();
+        }
     }
 }

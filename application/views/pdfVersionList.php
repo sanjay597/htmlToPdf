@@ -18,6 +18,7 @@
 <div class="container-fluid">
 	<?php $this->load->view('sidemenu'); ?>
 	<input type="hidden" value="<?php echo $pdfId ?>" id="pdfId" />
+	<a onclick="history.go(-1);" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 	<div class="row">
 		<div class="table">
 			<table class="table table-hover" id="searchTable">

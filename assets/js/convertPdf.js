@@ -18,15 +18,17 @@ function ajaxCall(url, data) {
     });
 }
 
-tinymce.init({
-    selector: 'textarea#content',
-    //use the setup option to handle events taking place within TinyMCE. Handling an event that returns data – in this case, an alert
-    // setup: function (editor) {
-    //     editor.on('click', function (e) { //Thanks to Benson Kariuki for the keydown event code https://www.section.io/engineering-education/keyboard-events-in-javascript/#javascript-keyboard-events
-    //         myCustomOnChangeHandler();
-    //     })
-    // }
-});
+// tinymce.init({
+//     selector: 'textarea#content',
+//     //use the setup option to handle events taking place within TinyMCE. Handling an event that returns data – in this case, an alert
+//     // setup: function (editor) {
+//     //     editor.on('click', function (e) { //Thanks to Benson Kariuki for the keydown event code https://www.section.io/engineering-education/keyboard-events-in-javascript/#javascript-keyboard-events
+//     //         myCustomOnChangeHandler();
+//     //     })
+//     // }
+// });
+
+CKEDITOR.replace('content');
 
 let resultMap = new Map(), m, rx = /{(.*?)}/g;
 
@@ -34,7 +36,7 @@ let prepareHtml = () => {
     resultMap.clear();
     return new Promise((resolve, reject) => {
         $('#dynamicFields').html('');
-        let str1 = tinymce.get("content").getContent();
+        let str1 = CKEDITOR.instances['content'].getData();
         str1 = DOMPurify.sanitize(str1);
         let i = 1;
         while ((m = rx.exec(str1)) !== null) {
@@ -72,7 +74,7 @@ let generatePDF = () => {
     console.log('here');
     window.jsPDF = window.jspdf.jsPDF;
     let doc = new jsPDF();
-    let newHtml = tinymce.get("content").getContent();
+    let newHtml = CKEDITOR.instances['content'].getData();
     newHtml = DOMPurify.sanitize(newHtml);
     $('#showPDF').attr('src', '');
     doc.html(newHtml, {
@@ -97,7 +99,7 @@ let savePdfData = async () => {
         alert('Please enter agreement title');
         return;
     }
-    let agreement = tinymce.get("content").getContent();
+    let agreement = CKEDITOR.instances['content'].getData();
     if(agreement.trim() == '') {
         alert('Please enter agreement content');
         return;

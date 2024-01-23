@@ -54,4 +54,10 @@ class Welcome extends CI_Controller
         echo json_encode($validate_login);
         exit();
     }
+
+    public function logout() {
+        session_destroy();
+        $this->load->view('login');
+        return;
+    }
 }

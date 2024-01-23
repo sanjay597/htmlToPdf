@@ -1,25 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['base_url'] = 'http://localhost/demoPdf/';
+$config['base_url'] = 'http://localhost/dynamicPdf/';
 
 $config['index_page'] = 'index.php';
 
-/*
-|--------------------------------------------------------------------------
-| URI PROTOCOL
-|--------------------------------------------------------------------------
-|
-| This item determines which server global should be used to retrieve the
-| URI string.  The default setting of 'REQUEST_URI' works for most servers.
-| If your links do not seem to work, try one of the other delicious flavors:
-|
-| 'REQUEST_URI'    Uses $_SERVER['REQUEST_URI']
-| 'QUERY_STRING'   Uses $_SERVER['QUERY_STRING']
-| 'PATH_INFO'      Uses $_SERVER['PATH_INFO']
-|
-| WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
-*/
 $config['uri_protocol']	= 'REQUEST_URI';
 
 /*

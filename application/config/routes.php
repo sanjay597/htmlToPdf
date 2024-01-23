@@ -1,10 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-// print_r($_SESSION);
-
 $route['login'] = 'Welcome/login';
 $route['logout'] = 'Welcome/logout';
+$route['test'] = 'Welcome';
 
 $route['admin/dashboard'] = 'Admin/dashboard';
 $route['admin/pdfList'] = 'Admin/pdfList';

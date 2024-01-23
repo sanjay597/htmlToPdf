@@ -122,7 +122,7 @@ class Admin extends CI_Controller
             $adminComment = $this->input->post('admin_comment');
             $pdfId = $this->input->post('pdfId');
             $this->load->model('CommonModel', 'common');
-            $res = $this->common->pdfUpdateData($title, $agreement, $adminComment, $pdfId);
+            $res = $this->common->mainPdfUpdate($title, $agreement, $adminComment, $pdfId);
             echo json_encode($res);
         }
     }
@@ -151,16 +151,8 @@ class Admin extends CI_Controller
     {
         if ($this->input->is_ajax_request()) {
             $pdfId = $this->input->post('pdfId');
-            try {
-                $res = $this->db->from('pdf_master_version')->where('id', $pdfId)->get()->row_array();
-                if ($res) {
-                    $response = ['success' => 1, 'data' => $res];
-                } else {
-                    $response = ['success' => 0, 'message' => 'No data found'];
-                }
-            } catch (Exception $e) {
-                $response = ['success' => 0, 'message' => $e->getMessage()];
-            }
+            $this->load->model('CommonModel', 'common');
+            $response = $this->common->pdfVersionData($pdfId);
             echo json_encode($response);
         }
     }
@@ -171,11 +163,16 @@ class Admin extends CI_Controller
             $pdfId = $this->input->post('pdfId');
             $adminId = $_SESSION['id'];
             try {
-                $res = $this->db->from('pdf_master_version')->where('id', $pdfId)->get()->row_array();
+                $res = $this->db->from('pdf_master')->where('id', $pdfId)->get()->row_array();
                 if ($res) {
-                    $final_status = $this->db->select('final_status')->from('pdf_master')->where('id', $res['pdf_id'])->get()->row_array();
+                    $final_status = $this->db->select('final_status, created_by')->from('pdf_master')->where('id', $res['pdf_id'])->get()->row_array();
                     if($final_status['final_status'] == 1) {
                         ['success' => 0, 'message' => 'Failed to update data'];
+                        echo json_encode($this->errorResponse);
+                        exit();
+                    }
+                    if($final_status['created_by'] != $adminId) {
+                        $this->errorResponse = ['success' => 0, 'message' => 'Access denied! You can not copy this agreement'];
                         echo json_encode($this->errorResponse);
                         exit();
                     }

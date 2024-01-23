@@ -10,7 +10,9 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-H+rglffZ6f5gF7UJgvH4Naa+fGCgjrHKMgoFOGmcPTRwR6oILo5R+gtzNrpDp7iMV3udbymBVjkeZGNz1Em4rQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="<?php echo base_url() ?>assets/tinymce/js/tinymce/tinymce.min.js"></script>
+	<!-- <script src="<?php echo base_url() ?>assets/tinymce/js/tinymce/tinymce.min.js"></script> -->
+	<script src="<?php echo base_url() ?>assets/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="<?php echo base_url() ?>assets/ckeditor/plugins/lite/lite-interface.js"></script>
 	<script src="<?php echo base_url() ?>assets/js/html2canvas.js"></script>
 	<script src="<?php echo base_url() ?>assets/js/jspdf.js" defer></script>
 	<script src="<?php echo base_url() ?>assets/js/pdfVersionData.js" defer></script>
@@ -26,6 +28,7 @@
 </style>
 	<?php $this->load->view('sidemenu'); ?>
 	<input type="hidden" value="<?php echo $pdfId ?>" id="pdfId"/>
+	<a onclick="history.go(-1);" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</a>
 	<div class="row">
 		<div class="col-lg-12">
 			<label>Agreement Title</label><input type="text" class="form-control" placeholder="Enter Agreement Title" id="agreement_title" disabled/>
@@ -45,9 +48,9 @@
 			<div class="row" id="dynamicFields" style="background-color: azure; border: 1px solid lightgray; border-radius: 6px;"></div>
 		</div>
 		
-		<div class="col-lg-12 text-center">
+		<!-- <div class="col-lg-12 text-center" style="display:none;" id="copyMain">
 			<input type="button" value="Copy In Main" class="btn btn-success" onclick="mapWithMain();"/>
-		</div>
+		</div> -->
 	</div>
   </div>
 </div>
